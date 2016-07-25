@@ -56,7 +56,8 @@ qt5_wrap_ui(qcomicbook_ui_src ${qcomicbook_ui})
 
 ADD_EXECUTABLE(qcomicbook ${qcomicbook_src} ${qcomicbook_moc_src} ${qcomicbook_ui_src} ${qcomicbook_res})
 ADD_DEPENDENCIES(qcomicbook translations)
-TARGET_LINK_LIBRARIES(qcomicbook Qt5::Widgets Qt5::PrintSupport Qt5::X11Extras)
+TARGET_LINK_LIBRARIES(qcomicbook Qt5::Widgets Qt5::PrintSupport)
+# Qt5::X11Extras
 TARGET_LINK_LIBRARIES(qcomicbook ${POPPLER_LIBRARIES})
 
 INSTALL(TARGETS qcomicbook DESTINATION bin)

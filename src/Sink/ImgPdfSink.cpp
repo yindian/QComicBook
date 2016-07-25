@@ -12,7 +12,12 @@
 
 #include "ImgPdfSink.h"
 #include "../Page.h"
+#if 0
 #include <QX11Info>
+#else
+#include <QApplication>
+#include <QScreen>
+#endif
 #include <QFileInfo>
 #include <QMutexLocker>
 
@@ -63,7 +68,12 @@ QImage ImgPdfSink::image(unsigned int num, int &result)
 		Poppler::Page* pdfpage = pdfdoc->page(num);
 		if (pdfpage)
 		{
+#if 0
 			QImage img = pdfpage->renderToImage(QX11Info::appDpiX(), QX11Info::appDpiY()); //TODO: use QScreen
+#else
+            QScreen *srn = QApplication::screens().at(0);
+			QImage img = pdfpage->renderToImage(srn->logicalDotsPerInchX(), srn->logicalDotsPerInchY());
+#endif
 			delete pdfpage;
 			result = 0;
 			return img;
