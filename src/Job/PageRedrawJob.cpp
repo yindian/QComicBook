@@ -17,6 +17,7 @@
 #include "PageRedrawJob.h"
 #include "../Page.h"
 #include "ComicPageImage.h"
+#include <QApplication>
 
 using namespace QComicBook;
 
@@ -53,7 +54,8 @@ void PageRedrawJob::execute()
     _DEBUG;
 
     delete m_result;
-    m_result = new QImage(m_width, m_height, QImage::Format_ARGB32);
+    m_result = new QImage(m_width * qApp->devicePixelRatio(), m_height * qApp->devicePixelRatio(), QImage::Format_ARGB32);
+    m_result->setDevicePixelRatio(qApp->devicePixelRatio());
     m_result->fill(0); // this prevents artifcats/garbage in transparent images
 
     QPainter p(m_result);

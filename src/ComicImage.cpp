@@ -181,7 +181,13 @@ void ComicImage::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt, Q
     if (m_pixmap)
     {
 //      painter->drawPixmap(opt->rect().x(), opt->rect().y(), *m_pixmap, opt->rect().x()-xoff, opt->rect().y()-yoff, opt->rect().width(), opt->rect().height());
-        painter->drawPixmap(opt->exposedRect, *m_pixmap, opt->exposedRect);
+        QRectF srcExposedRect = opt->exposedRect;
+        if (m_pixmap->devicePixelRatio() != 1.)
+        {
+            srcExposedRect.setTopLeft(srcExposedRect.topLeft() * m_pixmap->devicePixelRatio());
+            srcExposedRect.setSize(srcExposedRect.size() * m_pixmap->devicePixelRatio());
+        }
+        painter->drawPixmap(opt->exposedRect, *m_pixmap, srcExposedRect);
     }
 }
 
@@ -201,7 +207,7 @@ void ComicImage::requestRedraw(const QSize& requestedSize, const QMatrix &rotati
 void ComicImage::redraw(const QImage &img)
 {
     _DEBUG;
-    if (img.size() == m_scaledSize) // sanity check; should match size requested in requestRedraw(..)
+    if (img.size() / img.devicePixelRatio() == m_scaledSize) // sanity check; should match size requested in requestRedraw(..)
     {
         if (m_pixmap != NULL && m_pixmap->size() == img.size()) // reuse existing pixmap if of right size
         {
@@ -213,6 +219,7 @@ void ComicImage::redraw(const QImage &img)
         {
             delete m_pixmap;
             m_pixmap = new QPixmap(QPixmap::fromImage(img));
+            Q_ASSERT(m_pixmap->devicePixelRatio() == img.devicePixelRatio());
         }
         update();
     }
